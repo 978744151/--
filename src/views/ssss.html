@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<div id="video-body"></div>
+<input type="text" id="message" value="请输入消息">
+			<button id="send" type="button">发送</button>
+<body>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <script src="https://cdn.ronghub.com/RongIMLib-2.5.0.min.js"></script>
+    <script src="https://p6.suibianyuming.com.cn/chatRoom.js"></script>
+    <script>
+        var appInfo = {
+            "appKey": "25wehl3u2gruw",
+            "token": "nU7bsN2bU/dkhxA+4MzDr89hSIqYw2oH/uXt2OFN+m0cykXv0o9o4S6aS/Nomwn1bMa7IQOnOM8="
+        };
+        console.log(RongIMClient);
+
+
+        (function () {
+            var chatRoomInfo = {
+                "chatRoomId": "1",
+                "count": 20
+            };
+
+            RongChatRoom.init(appInfo, chatRoomInfo, {
+                onSuccess: function (chatRoom) {
+                    //注册自定义消息
+                    var propertys = ["title", "submitAPI", "questions"]; // 消息类中的属性名。
+                    registerMessage("QA", propertys);
+
+                    // 加入聊天室成功。
+                    console.log("加入聊天室成功");
+                    console.log(chatRoom);
+                    $("#message").val('加入聊天室成功，当前用户：' + chatRoom.currentUser.userId);
+
+                    //调用示例
+                    apiDemo(chatRoom);
+                },
+                onError: function (error) {
+                    alert('加入聊天室失败。')
+                    // 加入聊天室失败
+                },
+                onMessage: function (message) {
+                    console.log(message);
+                    
+                    if (message.objectName == "s:QA" && !message.offLineMessage) {
+                        qaLive(message.content)
+                    }
+                    updateDanmu(message.content.content);
+                }
+            });
+        })();
+
+
+        function registerMessage(type,propertys){
+	var messageName = type; // 消息名称。
+	var objectName = "s:" + type; // 消息内置名称，请按照此格式命名 *:* 。
+	var mesasgeTag = new RongIMLib.MessageTag(true,true); //true true 保存且计数，false false 不保存不计数。
+
+	RongIMClient.registerMessageType(messageName,objectName,mesasgeTag,propertys);
+}
+/*
+发送弹幕方法
+*/
+function updateDanmu(message){
+	// console.log(message)
+	//弹幕高度随机
+	var margintop = Math.random()*160 + Math.random()*160;
+		margintop = Math.ceil(margintop);
+	$("#video-body").append("<div class='active' style='top:"+margintop+"px;'>"+message+"</div>");
+}
+/*
+发送消息按钮，点击发送将push input框消息到服务器端，并清空input框。
+此处targetId为聊天室Id，勿和用户id混淆。
+*/
+function apiDemo(chatRoom){
+	$("#tools").show();
+	//点击发送消息
+	$("#send").click(function(){
+		var content = $("#message").val();
+			content = '<div style="color:red;background:#333;padding:5px;">'+ chatRoom.currentUser.userId+content + '</div>';
+		chatRoom.sendMessage({"content" : content}, {
+	        onSuccess: function (message) {
+				console.log("发送聊天室消息成功");
+				console.log(content);
+	            updateDanmu(content);
+	        },
+	        onError: function (errorCode,message) {
+	            console.log("发送聊天室消息失败",errorCode);
+	        }
+	    });
+	});
+
+	//循环发消息
+	// var sends = setInterval(function(){
+	// 	var content = {
+	// 		content:''
+	// 	};
+
+	// 	//聊天室发消息
+	// 	chatRoom.sendMessage(content, {
+	//         onSuccess: function (message) {
+	// 			updateDanmu(chatRoom.id + ": " + message.content.content);
+	//         },
+	//         onError: function (errorCode,message) {
+	//             console.log("发送聊天室消息失败", errorCode);
+	//         }
+	//     });
+    // },2000);
+	
+	//聊天室信息
+	chatRoom.getInfo({
+			order : RongIMLib.GetChatRoomType.REVERSE, // 排序方式。
+			memberCount : 10 // 0 - 20
+		},{
+		onSuccess : function(chatRoomInfo){
+			console.log("获取聊天室信息成功");
+			console.log(chatRoomInfo);
+		},
+		onError : function(error){
+
+		}
+	});
+
+    //聊天室退出
+    /*
+    chatRoom.quit({
+		onSuccess : function(){
+			console.log("退出成功")
+		},
+		onError : function(error){
+			console.log("退出失败", error)
+		}
+	});
+	*/
+}
+
+
+    </script>
+</body>
+
+</html>

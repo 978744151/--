@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        #app {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        div {
+            box-sizing: border-box;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .video-index {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+
+        .home-index {
+            width: 100%;
+            height: 100%;
+        }
+
+        .item-info-zindex {
+            display: flex;
+            line-height: 40px;
+            margin-top: 12px;
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 40px;
+            padding: 0 8px 0 4px;
+            z-index: 10;
+        }
+
+        .info-zindex-image {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-top: 4px;
+        }
+
+        .goods-title {
+            color: white;
+        }
+
+        .goods-attent {
+            width: 61px;
+            height: 24px;
+            background: rgba(244, 103, 103, 1);
+            opacity: 1;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+            margin: 8px 0px 0 10px;
+        }
+
+        .goods-attent img {
+            width: 100%;
+            height: 100%;
+            /* margin-left: 20rpx; */
+        }
+
+        .shop-share {
+            width: 17px;
+            height: 17px;
+        }
+
+        .shop-share-shandom {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.16);
+            border-radius: 50%;
+            opacity: 1;
+            display: inline-block;
+            text-align: center;
+            margin-left: 13px;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            margin-top: 7px;
+            margin-right: 1px;
+            z-index: 10;
+        }
+
+        .view-shop-input {
+            width: 100%;
+            height: 38px;
+            background: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            bottom: 0px;
+            text-align: left;
+            /* padding-left: 42px; */
+            display: flex;
+            z-index: 1;
+        }
+
+        .qplayer-controls {
+            z-index: 10 !important;
+        }
+
+
+        .view-shop-inputs {
+            width: 45%;
+            height: 30px;
+            background: rgba(44, 43, 42, 0.7);
+            border-radius: 20px;
+            padding-left: 16px;
+            box-sizing: border-box;
+            font-size: 14px;
+            color: #fff;
+            border: none;
+            box-sizing: border-box;
+            position: absolute;
+            bottom: 5px;
+            left: 13%;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .look-shop {
+            width: 90px;
+            height: 30px;
+            background: linear-gradient(45deg,
+                rgba(33, 212, 253, 1) 0%,
+                rgba(183, 33, 255, 1) 100%);
+            opacity: 1;
+            border-radius: 40px;
+            line-height: 30px;
+            position: absolute;
+            margin-left: 12px;
+            text-align: center;
+            bottom: 5px;
+            left: 57%;
+            z-index: 10;
+        }
+
+        .look-shop img {
+            width: 14px;
+            height: 15px;
+            display: inline-block;
+            position: absolute;
+            top: 8px;
+            left: 12px;
+        }
+
+        .look-shop span {
+            font-size: 12px;
+            color: #fff;
+            font-weight: 500;
+            display: inline-block;
+            margin-left: 15px;
+        }
+
+        .view-shop-like {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            z-index: -1;
+            right: 16px;
+            top: 5px;
+        }
+
+        .home-index-end {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 1;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            right: 0;
+            bottom: 0;
+            z-index: 99;
+        }
+
+        .index-end-center {
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .end-title {
+            width: 100%;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            font-size: 17px;
+        }
+
+        .see-old-video {
+            width: 96px;
+            height: 30px;
+            background: rgba(33, 160, 253, 1);
+            opacity: 1;
+            border-radius: 20px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .see-video-other {
+            width: 96px;
+            height: 30px;
+            border: 1px solid rgba(244, 103, 103, 1);
+            opacity: 1;
+            border-radius: 20px;
+            line-height: 30px;
+            text-align: center;
+            margin-left: 12px;
+        }
+
+        .index-end-end {
+            display: flex;
+            margin-top: 16px;
+            justify-content: center;
+        }
+
+        .video-is-play {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            z-index: 11;
+            width: 57px;
+            height: 57px;
+        }
+
+        .screen-box {
+            height: 200px;
+            background: rgba(0, 0, 0, .5);
+            width: 100%;
+        }
+
+        .screen-text {
+            padding: 3px 16px;
+            font-size: 12px;
+            position: absolute;
+            bottom: 60px;
+            left: 30px;
+            z-index: 9;
+            background: rgba(0, 0, 0, .5);
+            border-radius: 20px;
+        }
+
+        .screen-text span {
+            color: #EACEFF;
+        }
+
+        .screen-text p {
+            color: white;
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="home-index" id="app">
+        <div class="screen-box" id="video-body">
+           
+        </div>
+        <div class="home-index-end" v-if="showEnd">
+            <div class="index-end-center">
+                <p class="end-title">哈尼, 本场直播已经结束了....</p>
+                <div class="index-end-end">
+                    <div class="see-old-video" @click="seeOldVideo">看回放</div>
+                    <div class="see-video-other">看别的</div>
+                </div>
+            </div>
+        </div>
+        <img class="video-is-play" v-if="videoBegin" @click.stop="videoStart"
+            src="https://p6.suibianyuming.com.cn/ct/video/bofang.png" />
+        <div id="content" class="video-index"></div>
+        <!-- <video
+          :controls="control"
+          src="https://p6.suibianyuming.com.cn/ct/video/shop1566357543887494.mp4"
+          class="video-index"
+        ></video>-->
+        <div class="item-info-zindex">
+            <img class="info-zindex-image"
+                src="http://p5.suibianyuming.com.cn/icon0gow_5d31397ff181b?imageMogr2/thumbnail/160x/strip/quality/80/format/jpg" />
+            <div class="goods-title">沈莉</div>
+            <div class="goods-attent" bindtap="attent">
+                <img src="https://p6.suibianyuming.com.cn/ct/video/shopattention.png" />
+            </div>
+            <div class="goods-attent" bindtap="attent">
+                <img src="https://p6.suibianyuming.com.cn/ct/video/shopallreadyRember.png" />
+            </div>
+        </div>
+        <!-- <div class="shop-share-shandom">
+          <img class="shop-share" src="https://p6.suibianyuming.com.cn/ct/video/shopfx.png" alt />
+        </div>-->
+        <form class="view-shop-input" action="javascript:void 0">
+
+            <input id="send" @keyup.13="confirmInput" v-model="txtInput" type="text" class="view-shop-inputs"
+                placeholder="跟主播聊点什么?" />
+            <div class="look-shop" @click="pause">
+                <img src="https://p6.suibianyuming.com.cn/ct/video/shopshangpin@2x.png" alt />
+                <span>查看商品</span>
+            </div>
+            <img class="view-shop-like" src="https://p6.suibianyuming.com.cn/ct/video/shop/like@2x.png" alt />
+        </form>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <script src="https://sdk-release.qnsdk.com/qiniu-web-player-1.2.0.js "></script>
+    <script src="https://cdn.ronghub.com/RongIMLib-2.5.0.min.js"></script>
+    <script src="https://p6.suibianyuming.com.cn/chatRoom.js"></script>
+    <script>
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                videoInfo: "",
+                show: true,
+                control: true,
+                showEnd: false,
+                videoBegin: true,
+                txtInput: '',
+                chatRoom:'',
+                id:0
+            },
+            methods: {
+                pause() {
+                    this.player.pause();
+                },
+                videoStart() {
+                    this.player.play();
+                    this.videoBegin = false;
+                },
+                seeOldVideo() {
+                    this.showEnd = false;
+                    this.player.play();
+                },
+                videoPlay() {
+                    const player = new QPlayer({
+                        url:
+                            "https://p6.suibianyuming.com.cn/ct/video/shop1566357543887494.mp4",
+                        container: document.getElementById("content"),
+                        isLive: true,
+                        autoplay: false,
+                        muted: false,
+                        hls: {
+                            qualityName: ["低清", "标清", "高清", "超清"]
+                        },
+                        defaultViewConfig: {
+                            // playIcon: "https://p6.suibianyuming.com.cn/ct/video/shop/like@2x.png",
+                            // pauseIcon: "https://p6.suibianyuming.com.cn/red@2x.png",
+                            // volumeOffIcon: "https://p6.suibianyuming.com.cn/red@2x.png",
+                            showControls: false,
+                            inactiveTimeout: 1500,
+                            noControls: true,
+                            // fullscreenIcon: none,
+                            settingsIcon:
+                                "https://p6.suibianyuming.com.cn/ct/video/shopmessage@2x.png"
+                        }
+                    });
+                    this.player = player;
+                    player.on("ended", () => {
+                        this.showEnd = true;
+                    });
+                },
+                updateDanmu(message) {
+                    //弹幕高度随机
+
+                 
+                    $('#t'+this.id).animate({ bottom: "300px" },5000,function(){
+                        
+                    });
+                    
+                    },
+                confirmInput() {
+                    var that = this
+                    var chatRoom = this.chatRoom
+                       
+                        var content = $("#message").val();
+                        content = that.txtInput;
+                        chatRoom.sendMessage({ "content": content }, {
+                            onSuccess: function (message) {
+                                $("#video-body").append(`
+                                <div class="screen-text" id =t`+ that.id++ +  `>
+                                    <span>沈莉:</span>
+                                    <p>`+ content+`</p>
+                                </div>`);
+                            that.updateDanmu(content);
+                            },
+                            onError: function (errorCode, message) {
+                                console.log("发送聊天室消息失败", errorCode);
+                            }
+                        });
+                    //聊天室信息
+                    this.chatRoom.getInfo({
+                        order: RongIMLib.GetChatRoomType.REVERSE, // 排序方式。
+                        memberCount: 10 // 0 - 20
+                    }, {
+                            onSuccess: function (chatRoomInfo) {
+                                console.log("获取聊天室信息成功");
+                                console.log(chatRoomInfo);
+                            },
+                            onError: function (error) {
+
+                            }
+                        });
+                }
+
+            },
+            created() {
+
+            },
+
+            mounted() {
+                var that = this
+                this.videoPlay();
+                console.log(this.api);
+                var params = {
+                    uid: "148331470",
+                    video_id: 1
+                };
+                // this.api.pcindex(params).then(data => {
+                //     console.log(data);
+                //     this.videoInfo = data.data;
+                // });
+                var appInfo = {
+                    "appKey": "25wehl3u2gruw",
+                    "token": "GrryqQ1NbVShcQpdMMY3jFlZXMEOeBl1hl4MyBmYwf7qPFQnFR/ht6/yOpjnHLk3KOQBlAueb6E/y4GnQ0cGpA=="
+                };
+                console.log(RongIMClient);
+
+
+                (function () {
+                    var chatRoomInfo = {
+                        "chatRoomId": "1",
+                        "count": 20
+                    };
+
+                    RongChatRoom.init(appInfo, chatRoomInfo, {
+                        onSuccess: function (chatRoom) {
+                            //注册自定义消息
+                            var propertys = ["title", "submitAPI", "questions"]; // 消息类中的属性名。
+                            registerMessage("QA", propertys);
+
+                            // 加入聊天室成功。
+                            console.log("加入聊天室成功");
+                            console.log(chatRoom);
+                            $("#message").val('加入聊天室成功，当前用户：' + chatRoom.currentUser.userId);
+                            that.chatRoom =  chatRoom
+                            console.log()
+                            //调用示例
+                        },
+                        onError: function (error) {
+                            alert('加入聊天室失败。')
+                            // 加入聊天室失败
+                        },
+                        onMessage: function (message) {
+                            console.log(message);
+
+                            if (message.objectName == "s:QA" && !message.offLineMessage) {
+                                qaLive(message.content)
+                            }
+                            updateDanmu(message.content.content);
+                        }
+                    });
+                })();
+
+
+                function registerMessage(type, propertys) {
+                    var messageName = type; // 消息名称。
+                    var objectName = "s:" + type; // 消息内置名称，请按照此格式命名 *:* 。
+                    var mesasgeTag = new RongIMLib.MessageTag(true, true); //true true 保存且计数，false false 不保存不计数。
+
+                    RongIMClient.registerMessageType(messageName, objectName, mesasgeTag, propertys);
+                }
+                /*
+                发送弹幕方法
+                */
+                function updateDanmu(message) {
+                    console.log(message)
+                    //弹幕高度随机
+                    var margintop = Math.random() * 160 + Math.random() * 160;
+                    margintop = Math.ceil(margintop);
+                    $("#video-body").append("<div class='active' style='top:" + margintop + "px;'>" + message + "</div>");
+                }
+                /*
+                发送消息按钮，点击发送将push input框消息到服务器端，并清空input框。
+                此处targetId为聊天室Id，勿和用户id混淆。
+                */
+                function apiDemo(chatRoom) {
+                    $("#tools").show();
+                    //点击发送消息
+                   
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
