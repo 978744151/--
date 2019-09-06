@@ -16,7 +16,13 @@ const livejoinapi = '?action=livejoin'
 let livejoin = function (params) {
     return fetch.httpRequest(livejoinapi, params)
 }
+// action=liveGoodslist  商品列表
+const liveGoodslistApi = '?action=liveGoodslist'
+let liveGoodslist = function (params) {
+    return fetch.httpRequest(liveGoodslistApi, params)
+}
 module.exports = {
+    liveGoodslist,
     livejoin,
     pcindex,
     liveList,

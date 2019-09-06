@@ -2,14 +2,11 @@
   <div class="home-index">
     <!-- <div class="screen-hidden"> -->
     <div class="screen-box" id="video-body">
-      <div class="screen-height">
-        <div class="screen-text" v-for="(item,index) in commentBox" :key="index">
-          <div class="screen-br">
-            <span>{{item.name}}&nbsp;:&nbsp;</span>
-            <p>{{item.content}}</p>
-          </div>
+      <!-- <div class="screen-height">
+        <div class="screen-text" >
+           
         </div>
-      </div>
+      </div> -->
     </div>
     <!-- </div> -->
 
@@ -35,18 +32,15 @@
       class="video-index"
     ></video>-->
     <div class="item-info-zindex">
-      <img
-        class="info-zindex-image" 
-        :src="videoInfo.img"
-      />
+      <img class="info-zindex-image" :src="videoInfo.img" />
       <!-- joinInfo.data.latest_user[0].img_s {{joinInfo.data.latest_user[0].nickname}} -->
       <div class="goods-title">{{videoInfo.nickname}}</div>
-      <div class="goods-attent" bindtap="attent">
+      <!-- <div class="goods-attent" bindtap="attent">
         <img src="https://p6.suibianyuming.com.cn/ct/video/shopattention.png" />
       </div>
       <div class="goods-attent" bindtap="attent">
         <img src="https://p6.suibianyuming.com.cn/ct/video/shopallreadyRember.png" />
-      </div>
+      </div>-->
     </div>
     <div class="shop-share-shandom">
       <img class="shop-share" src="https://p6.suibianyuming.com.cn/ct/video/shopfx.png" alt />
@@ -74,7 +68,6 @@
 </template>
 
 <script>
-import { log } from 'util';
 export default {
   name: "HelloWorld",
   data() {
@@ -88,8 +81,10 @@ export default {
       chatRoom: "",
       id: 0,
       commentBox: [],
-      rytokenInfo:'',
-      joinInfo:''
+      rytokenInfo: "",
+      joinInfo: "",
+      goodlist: "",
+      temLiveId:false
     };
   },
   methods: {
@@ -102,12 +97,12 @@ export default {
     },
     videoPlay() {
       const player = new QPlayer({
-        url:this.joinInfo.push_url,
+        url: this.joinInfo.push_url,
         // url:"http://pili-media.www.0gow.com/recordings/z1.0gow-live.5d5e8410a3d5ec42f5147f7b/5330.m3u8",
         container: document.getElementById("content"),
         isLive: true,
         autoplay: false,
-        muted: false,
+        muted: true,
         hls: {
           qualityName: ["低清", "标清", "高清", "超清"]
         },
@@ -133,22 +128,33 @@ export default {
       this.showEnd = false;
       this.player.play();
     },
+    getGoodList() {
+      var params = {
+        uid: this.$route.query.uid,
+        live_id: this.temLiveId || this.videoInfo.id 
+      };
+      this.api.liveGoodslist(params).then(data => {
+        this.goodlist = data.data;
+      });
+    },
     top() {
       $(".screen-box").scrollTop($(".screen-box")[0].scrollHeight);
     },
-    updateDanmu(message) {
+    updateDanmu(message,name) {
       var that = this;
-      //弹幕高度随机
-      var firstComment = {
-        name: that.chatRoom.id,
-        content: message
-      };
-     
-      this.commentBox.push(firstComment);
+      $("#video-body").append(message);
       this.txtInput = "";
-      setTimeout(that.top(), 1000);
-      // this.commentBox.
-      // $("#t" + this.id).animate({ bottom: "300px" }, 5000, function() {});
+    },
+    getRandomColor(){
+            var colorArr = ['1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+            var color = "";
+            for(var i = 0; i < 6; i++){
+                color += colorArr[Math.floor(Math.random()*15)];
+            }
+            return "#"+color;
+     },
+    getTmp(name,txtInput,color){
+      return '<div style="padding-left:10px;"><span style=color:'+ color +';font-size:14px;>' + name +":</span><span style='color:white;font-size:14px;'>"+  txtInput +'</span></div>'
     },
     confirmInput() {
       if (this.txtInput.trim() == "") {
@@ -157,20 +163,10 @@ export default {
       }
       var that = this;
       var chatRoom = this.chatRoom;
-      // var content = $("#message").val();
-      var content = that.txtInput;
-      chatRoom.sendMessage(
-        { "content": content },
-        {
-          onSuccess: function(message) {
-            console.log("发送聊天室消息成功");
-            that.updateDanmu(content);
-          },
-          onError: function(errorCode, message) {
-            console.log("发送聊天室消息失败", errorCode);
-          }
-        }
-      );
+      
+      var content = that.getTmp(that.rytokenInfo.info.nickname, that.txtInput,this.getRandomColor() )
+      // var content = '<div style="padding-left:10px;"><span style=color:'+ that.getRandomColor() +';font-size:14px;>' + that.rytokenInfo.info.nickname +":</span><span style='color:white;font-size:14px;'>"+  that.txtInput +'</span></div>'
+      this.sendInfo(content);
       //聊天室信息
       this.chatRoom.getInfo(
         {
@@ -186,80 +182,94 @@ export default {
         }
       );
     },
+    sendInfo(content,name) {
+      var that = this;
+      that.chatRoom.sendMessage(
+        { content: content },
+        {
+          onSuccess: function(message) {
+            console.log("发送聊天室消息成功");
+            that.updateDanmu(content,name);
+            setTimeout(that.top, 100);
+          },
+          onError: function(errorCode, message) {
+            console.log("发送聊天室消息失败", errorCode);
+          }
+        }
+      );
+    },
     liveInfo() {
       var params = {
-        uid: this.$route.query.uid || "148331470",
-        // video_id: 1
+        uid: this.$route.query.uid
       };
       this.api.gorytoken(params).then(data => {
-        this.rytokenInfo = data
-        this.sever(data)
-        this.livejoin(data)
-       
+        this.rytokenInfo = data;
+        this.sever(this.rytokenInfo).then((res)=>{
+          this.livejoin()
+        });
       });
       this.api.liveList().then(data => {
         this.videoInfo = data.list[0];
+        this.getGoodList()
       });
-     
-      
     },
-    livejoin(info,fn){
+    livejoin() {
       var params = {
-        // live_id:info.id,
-        live_id:  "5362",
-        uid: this.$route.query.uid || "148331470",
-      }
+        live_id: this.temLiveId || this.videoInfo.id,
+        uid: this.$route.query.uid
+      };
+      var content
       this.api.livejoin(params).then(data => {
-        this.joinInfo = data.data
-        var Comment2 = {
-          name: '*',
-          content: data.data.common_msg
-        };
-        this.commentBox.push(Comment2);
-        this.videoPlay();
+        this.joinInfo = data.data;
+        var Comment2 = this.getTmp(data.data.common_msg,'','red' )
+        
+        $('#video-body').append(Comment2);
+        // this.commentBox.push(Comment2);
+        this.videoPlay()
+        content = this.getTmp(this.joinInfo.latest_msg, '','white' )
+        this.sendInfo(content);
       });
     },
     sever(rytokenInfo) {
-      var that = this;
+      var that = this
       var appInfo = {
-        appKey: "8w7jv4qb78a9y" ||  rytokenInfo.key,
-        token: "ZThhLI1Xa1BX5EMREAdArWSH6ouuI8NT/fNmMkzF+4IOKIoFvbsi6JnH8QmnSltLkCcsK8vOgKl3IZgfbxFiWg==" || rytokenInfo.token,
+        appKey: rytokenInfo.key,
+        token: rytokenInfo.token
         // appKey:"25wehl3u2gruw",
         // token:"abpc7F/CgEZrrIhtr6rvKXyawc7RA6O2wh6eIzvzG7XNWQGPGkaAUWIkyyhD3yXpyVr4UQIWsWHZ6i84ljTyBQ=="
       };
-      console.log(appInfo)
       var chatRoomInfo = {
-        chatRoomId: this.videoInfo.id,
+        chatRoomId:this.temLiveId || this.videoInfo.id,
         count: 0
       };
-      RongChatRoom.init(appInfo, chatRoomInfo, {
-        onSuccess: function(chatRoom) {
-          console.log(chatRoom)
-          //注册自定义消息
-          var propertys = ["title", "submitAPI", "questions"]; // 消息类中的属性名。
-          registerMessage("QA", propertys);
-
-          // 加入聊天室成功。
-          console.log("加入聊天室成功");
-          // console.log(chatRoom);
-          // $("#send").val(
-          //   "加入聊天室成功，当前用户：" + chatRoom.currentUser.userId
-          // );
-          that.chatRoom = chatRoom;
-          //调用示例
-        },
-        onError: function(error) {
-          alert("加入聊天室失败。");
-          // 加入聊天室失败
-        },
-        onMessage: function(message) {
-          console.log(message);
-          if (message.objectName == "s:QA" && !message.offLineMessage) {
-            // qaLive(message.content);
+      return new Promise((reslove, reject) => {
+        RongChatRoom.init(appInfo, chatRoomInfo, {
+          onSuccess: function(chatRoom) {
+            console.log(1,chatRoom);
+            //注册自定义消息
+            var propertys = ["title", "submitAPI", "questions"]; // 消息类中的属性名。
+            registerMessage("QA", propertys);
+            // 加入聊天室成功。
+            console.log("加入聊天室成功");
+            that.chatRoom = chatRoom;
+            reslove()
+            //调用示例
+          },
+          onError: function(error) {
+            alert("加入聊天室失败。");
+            // 加入聊天室失败
+          },
+          onMessage: function(message) {
+            console.log(message);
+            // if (message.objectName == "s:QA" && !message.offLineMessage) {
+            //   // qaLive(message.content);
+            // }
+            that.updateDanmu(message.content.content);
+            setTimeout(that.top, 100);
           }
-          that.updateDanmu(message.content.content);
-        }
+        });
       });
+
       function registerMessage(type, propertys) {
         var messageName = type; // 消息名称。
         var objectName = "s:" + type; // 消息内置名称，请按照此格式命名 *:* 。
@@ -274,11 +284,11 @@ export default {
     }
   },
   created() {
-     
+   
   },
 
   mounted() {
-   this.liveInfo();
+     this.liveInfo()
   }
 };
 </script>
@@ -290,7 +300,7 @@ export default {
   height: 130px;
   z-index: 123;
   // margin-top: 4px;
-  bottom: 70px;
+  bottom: 38px;
   left: 0px;
   width: 100%;
   box-sizing: border-box;
@@ -300,7 +310,7 @@ export default {
     rgba(0, 0, 0, 0.3) 100%
   );
   overflow: scroll;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
 }
 .scroll-height {
   background: linear-gradient(
@@ -326,16 +336,13 @@ export default {
   overflow: hidden;
 }
 .screen-text {
- 
- 
 }
-.screen-br{
- padding: 3px 16px;
- margin: 4px 0;
-font-size: 12px;
+.screen-br {
+  padding: 3px 16px;
+  margin: 4px 0;
+  font-size: 12px;
   // background: rgba(0, 0, 0, 0.5);
-border-radius: 20px;
-  
+  border-radius: 20px;
 }
 .screen-text span {
   color: #eaceff;
@@ -407,6 +414,9 @@ border-radius: 20px;
   height: 17px;
 }
 .shop-share-shandom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 32px;
   height: 32px;
   background: rgba(0, 0, 0, 0.16);
